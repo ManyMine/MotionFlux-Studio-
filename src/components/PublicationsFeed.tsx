@@ -9,12 +9,22 @@ import { cn } from '../utils';
 import { TimelineClip, MediaItem } from '../types';
 import { getMediaFile } from '../utils/mediaDb';
 
-function blobToBase64(blob: Blob): Promise<string> {
+function blobToBase64(blob: Blob, expectedType?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      const dataUrl = reader.result as string;
-      if (blob.type.startsWith('image/') && blob.size > 200 * 1024) {
+      let dataUrl = reader.result as string;
+      
+      const type = blob.type || expectedType || '';
+      
+      // Ensure format is preserved if type is missing or wrong
+      if (type.startsWith('video/') && dataUrl.startsWith('data:application/octet-stream')) {
+        dataUrl = dataUrl.replace('data:application/octet-stream', `data:${type}`);
+      } else if (dataUrl.startsWith('data:;') && expectedType) {
+        dataUrl = dataUrl.replace('data:;', `data:${expectedType === 'video' ? 'video/mp4' : (expectedType === 'audio' ? 'audio/mp3' : 'image/jpeg')};`);
+      }
+
+      if (type.startsWith('image/') && blob.size > 200 * 1024) {
         const img = new Image();
         img.src = dataUrl;
         img.onload = () => {
@@ -367,7 +377,7 @@ export function PublicationsFeed({ userSession, setUserSession, onBack, onRemixP
             const blob = await getMediaFile(fileId);
             if (blob) {
               try {
-                const base64 = await blobToBase64(blob);
+                const base64 = await blobToBase64(blob, clip.type);
                 updatedClip.dataUrl = base64;
                 updatedClip.url = base64;
                 totalSize += base64.length;
@@ -387,7 +397,7 @@ export function PublicationsFeed({ userSession, setUserSession, onBack, onRemixP
             const blob = await getMediaFile(item.id);
             if (blob) {
               try {
-                const base64 = await blobToBase64(blob);
+                const base64 = await blobToBase64(blob, item.type);
                 updatedItem.dataUrl = base64;
                 updatedItem.url = base64;
                 totalSize += base64.length;
@@ -854,6 +864,44 @@ export function PublicationsFeed({ userSession, setUserSession, onBack, onRemixP
           </div>
         </div>
       )}
+
+      {/* CUSTOM DIALOG */}
+      {customDialog.isOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <div className="bg-[#0f0f15] border border-white/10 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in text-center p-6 space-y-4">
+            <h3 className="text-base font-extrabold text-white uppercase tracking-wider">{customDialog.title}</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium">{customDialog.message}</p>
+            
+            <div className="flex justify-center gap-3 pt-2">
+              {customDialog.type === 'confirm' ? (
+                <>
+                  <button 
+                    onClick={() => setCustomDialog(prev => ({ ...prev, isOpen: false }))}
+                    className="flex-1 py-2 px-4 rounded-xl border border-white/10 text-slate-300 font-bold text-xs hover:bg-white/5 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      if (customDialog.onConfirm) customDialog.onConfirm();
+                    }}
+                    className="flex-1 py-2 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors"
+                  >
+                    Confirmar
+                  </button>
+                </>
+              ) : (
+                <button 
+                  onClick={() => setCustomDialog(prev => ({ ...prev, isOpen: false }))}
+                  className="w-full py-2 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors"
+                >
+                  OK
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -994,8 +1042,21 @@ function DetailPlayerModal({
     if (!ctx) return;
 
     // Set canvas internal resolution based on ratio
-    const width = 360;
-    const height = 640;
+    const aspectRatio = pub.projectData?.settings?.aspectRatio || '9/16';
+    let width = 360;
+    let height = 640;
+    
+    if (aspectRatio === '16/9') {
+      width = 640;
+      height = 360;
+    } else if (aspectRatio === '1/1') {
+      width = 480;
+      height = 480;
+    } else if (aspectRatio === '4/5') {
+      width = 400;
+      height = 500;
+    }
+    
     canvas.width = width;
     canvas.height = height;
 
@@ -1260,7 +1321,13 @@ function DetailPlayerModal({
 
         {/* Video Canvas Section (Left Pane) */}
         <div className="flex-1 bg-black flex flex-col items-center justify-center p-4 relative min-h-[50vh] md:min-h-0 border-r border-white/5">
-          <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[9/16] bg-[#030305] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <div 
+            className="relative w-full bg-[#030305] rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
+            style={{ 
+              aspectRatio: pub.projectData?.settings?.aspectRatio?.replace(':', '/') || '9/16',
+              maxWidth: pub.projectData?.settings?.aspectRatio === '16/9' ? '500px' : '320px'
+            }}
+          >
             <canvas ref={canvasRef} className="w-full h-full object-cover" />
             
             {/* Ambient Watermark */}

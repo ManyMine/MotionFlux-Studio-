@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Cinzel:wght@700&family=Creepster&family=Fira+Sans:wght@400;700&family=Inconsolata:wght@400;700&family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Josefin+Sans:wght@400;700&family=Karla:wght@400;700&family=Lato:wght@400;700&family=Lobster&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700;900&family=Mukta:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Work+Sans:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom scrollbar for dark mode */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #52525b;
+}
+
+.clip-playhead {
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+/* Video Effects */
+@keyframes glitch-anim {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+.effect-glitch {
+  animation: glitch-anim 0.2s infinite;
+}
+
+.effect-vintage {
+  filter: sepia(0.8) contrast(1.2) brightness(0.9);
+}
+.effect-vintage::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+@keyframes smooth-zoom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.effect-zoom {
+  animation: smooth-zoom 10s ease-in-out infinite;
+}
+
+@keyframes shake-anim {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+.effect-shake {
+  animation: shake-anim 0.5s ease-in-out;
+}
+
+@keyframes bounce-anim {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+.effect-bounce {
+  animation: bounce-anim 1s;
+}
+
+.effect-motion-blur {
+  filter: blur(4px);
+}
+
+/* 5 New Premium Video Effects */
+@keyframes scanline-flicker {
+  0% { opacity: 0.93; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.1); }
+  100% { opacity: 0.93; filter: brightness(1); }
+}
+.effect-scanline {
+  animation: scanline-flicker 0.1s infinite;
+  background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+  background-size: 100% 6px;
+  filter: contrast(1.2) brightness(0.95);
+}
+
+@keyframes rgb-split-anim {
+  0% { filter: drop-shadow(3px 0px 0px rgba(255,0,80,0.6)) drop-shadow(-3px 0px 0px rgba(0,255,255,0.6)); }
+  50% { filter: drop-shadow(-2px 1px 0px rgba(255,0,80,0.5)) drop-shadow(2px -1px 0px rgba(0,255,255,0.5)); }
+  100% { filter: drop-shadow(3px 0px 0px rgba(255,0,80,0.6)) drop-shadow(-3px 0px 0px rgba(0,255,255,0.6)); }
+}
+.effect-rgb-split {
+  animation: rgb-split-anim 0.3s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.4)) brightness(1); }
+  50% { filter: drop-shadow(0 0 16px rgba(139, 92, 246, 0.9)) brightness(1.3); }
+}
+.effect-pulse {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.effect-pixelate {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: contrast(1.2) saturate(1.4);
+}
+
+@keyframes acid-rainbow {
+  0% { filter: hue-rotate(0deg) saturate(1.8) contrast(1.1); }
+  50% { filter: hue-rotate(180deg) saturate(2.4) contrast(1.25); }
+  100% { filter: hue-rotate(360deg) saturate(1.8) contrast(1.1); }
+}
+.effect-acid-trip {
+  animation: acid-rainbow 3s linear infinite;
+}
+
+/* Fonts */
+.font-bebas { font-family: 'Bebas Neue', sans-serif; }
+.font-pacifico { font-family: 'Pacifico', cursive; }
+.font-oswald { font-family: 'Oswald', sans-serif; }
+.font-inter { font-family: 'Inter', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }

@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "Publication": {
+      "title": "Publication",
+      "description": "A public video post that users can play, comment on, like, and remix.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "likes": { "type": "array" },
+        "favorites": { "type": "array" },
+        "comments": { "type": "array" },
+        "reports": { "type": "array" },
+        "createdAt": { "type": "number" },
+        "projectData": { "type": "object" }
+      },
+      "required": ["id", "userId", "userName", "title", "createdAt"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "An offline/online user project containing media files and clips.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "media": { "type": "array" },
+        "clips": { "type": "array" },
+        "settings": { "type": "object" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "name", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "publications/{publicationId}": {
+      "schema": "Publication",
+      "description": "Collection of public video posts."
+    },
+    "projects/{projectId}": {
+      "schema": "Project",
+      "description": "Collection of synced user projects."
+    }
+  }
+}

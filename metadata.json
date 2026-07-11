@@ -1,0 +1,8 @@
+{
+  "name": "Copy of Studio Edit - Vertical Video Editor",
+  "description": "A vertical video editor designed for social media formats with timeline, media importing, and AI auto-editing capabilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

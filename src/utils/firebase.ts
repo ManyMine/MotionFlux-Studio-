@@ -3,25 +3,29 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/
 import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCsjwrvxJ5hRxMIOatpnBbdOC5JmxbtMh0",
-  authDomain: "gen-lang-client-0375299233.firebaseapp.com",
-  projectId: "gen-lang-client-0375299233",
-  storageBucket: "gen-lang-client-0375299233.firebasestorage.app",
-  messagingSenderId: "54897347360",
-  appId: "1:54897347360:web:6c72bd826213f097176545"
+  apiKey: "AIzaSyBm86AWqYSeR6IHuu-HXFIHC5EXh1DPJa0",
+  authDomain: "gen-lang-client-0375005016.firebaseapp.com",
+  projectId: "gen-lang-client-0375005016",
+  storageBucket: "gen-lang-client-0375005016.firebasestorage.app",
+  messagingSenderId: "688332492359",
+  appId: "1:688332492359:web:1328a7b7224c24c0afeb62"
 };
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app, "ai-studio-studioeditvertic-35d96540-441f-417f-bb97-035fa801f65e");
+export const db = getFirestore(app, "ai-studio-motionfluxstudio-4a9d3695-380a-42a9-a5db-a277337bef5a");
 export const googleProvider = new GoogleAuthProvider();
 
 export async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao fazer login com o Google:", error);
+    if (error?.code === 'auth/unauthorized-domain') {
+      const domain = window.location.hostname;
+      throw new Error(`Domínio não autorizado. Adicione '${domain}' aos domínios autorizados no Firebase Console (Authentication > Settings > Authorized domains) do projeto 'gen-lang-client-0375005016'.`);
+    }
     throw error;
   }
 }

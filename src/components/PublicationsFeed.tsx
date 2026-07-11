@@ -84,8 +84,8 @@ export interface Publication {
 }
 
 interface PublicationsFeedProps {
-  userSession: { email: string; name: string; isLoggedIn: boolean; method?: string };
-  setUserSession?: React.Dispatch<React.SetStateAction<{ email: string; name: string; isLoggedIn: boolean; method?: string }>>;
+  userSession: { email: string; name: string; isLoggedIn: boolean; method?: string; hideEmail?: boolean };
+  setUserSession?: React.Dispatch<React.SetStateAction<{ email: string; name: string; isLoggedIn: boolean; method?: string; hideEmail?: boolean }>>;
   onBack: () => void;
   onRemixProject: (projectData: any) => void;
 }
@@ -717,6 +717,7 @@ export function PublicationsFeed({ userSession, setUserSession, onBack, onRemixP
           onCommentSubmit={handleAddComment}
           commentText={newCommentText}
           onCommentTextChange={setNewCommentText}
+          onReport={() => handleReportPub(selectedPub.id)}
         />
       )}
 
